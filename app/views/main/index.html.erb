@@ -1,0 +1,57 @@
+<% content_for :script do %>
+  <script type='text/javascript'>
+
+    function makeChart(data) {
+      $('#chart').highcharts({
+          chart: {
+              plotBackgroundColor: null,
+              plotBorderWidth: null,
+              plotShadow: false
+          },
+          tooltip: {
+              pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+          },
+          plotOptions: {
+              pie: {
+                  allowPointSelect: true,
+                  cursor: 'pointer',
+                  dataLabels: {
+                      enabled: true,
+                      format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                      style: {
+                          color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                      }
+                  }
+              }
+          },
+          series: [{
+            type: 'pie',
+            name: 'Keywords',
+            data: data
+          }]
+      });
+    }
+
+  $(document).ready(function(){
+    $('form').submit(function(){
+      $.ajax({
+              type: 'post',
+              url: '/main/create',
+              data: $(this).serialize()
+      })
+      .success(function(response){
+        makeChart(response);
+      })
+      return false;
+    })
+  })
+  </script>
+<% end %>
+<div class="wrapper">
+  <p>Url to analyze</p>
+  <form action="">
+    <input type="text" name='url' value='http://'>
+    <input type="submit" value='Fetch'>
+  </form>
+  <div id="chart"></div>
+</div>
